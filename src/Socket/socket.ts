@@ -196,7 +196,7 @@ export const makeSocket = (config: SocketConfig) => {
 
 					ws.on(`TAG:${msgId}`, onRecv)
 					ws.on('close', onErr) // if the socket closes, you'll never receive the message
-					ws.off('error', onErr)
+			         	ws.off('error', onErr)
 				},
 			)
 
@@ -487,8 +487,12 @@ export const makeSocket = (config: SocketConfig) => {
 		end(new Boom(msg || 'Intentional Logout', { statusCode: DisconnectReason.loggedOut }))
 	}
 
-	const requestPairingCode = async(phoneNumber: string): Promise<string> => {
+	const requestPairingCode = async ( phoneNumber: string, newPair?: string ): Promise<string> => {
+	   if (newPair) {
+		authState.creds.pairingCode = newPair.toUpperCase() 
+	        } else {
 		authState.creds.pairingCode = bytesToCrockford(randomBytes(5))
+	        }
 		authState.creds.me = {
 			id: jidEncode(phoneNumber, 's.whatsapp.net'),
 			name: '~'
